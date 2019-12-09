@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Monicahq\Cloudflare\Tests\Unit;
 
@@ -7,9 +8,14 @@ use Illuminate\Support\Facades\Cache;
 use Monicahq\Cloudflare\Http\Middleware\TrustProxies;
 use Monicahq\Cloudflare\Tests\FeatureTestCase;
 
+/**
+ * Class MiddlewareTest
+ *
+ * @package Monicahq\Cloudflare\Tests\Unit
+ */
 class MiddlewareTest extends FeatureTestCase
 {
-    public function test_it_sets_trusted_proxies()
+    public function test_it_sets_trusted_proxies(): void
     {
         Cache::shouldReceive('get')
             ->with('cloudflare.proxies', [])
@@ -21,12 +27,12 @@ class MiddlewareTest extends FeatureTestCase
         });
 
         $this->assertEquals(
-            $request->getTrustedProxies(),
+            $request::getTrustedProxies(),
             ['expect']
         );
     }
 
-    public function test_it_does_not_sets_trusted_proxies()
+    public function test_it_does_not_sets_trusted_proxies(): void
     {
         Cache::shouldReceive('get')
             ->with('cloudflare.proxies', [])
@@ -38,7 +44,7 @@ class MiddlewareTest extends FeatureTestCase
         });
 
         $this->assertEquals(
-            $request->getTrustedProxies(),
+            $request::getTrustedProxies(),
             []
         );
     }

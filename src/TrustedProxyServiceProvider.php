@@ -1,9 +1,15 @@
 <?php
+declare(strict_types=1);
 
 namespace Monicahq\Cloudflare;
 
 use Illuminate\Support\ServiceProvider;
 
+/**
+ * Class TrustedProxyServiceProvider
+ *
+ * @package Monicahq\Cloudflare
+ */
 class TrustedProxyServiceProvider extends ServiceProvider
 {
     /**
@@ -11,7 +17,7 @@ class TrustedProxyServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         $this->registerPublishing();
     }
@@ -21,7 +27,7 @@ class TrustedProxyServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    private function registerPublishing()
+    private function registerPublishing(): void
     {
         if ($this->app->runningInConsole()) {
             $this->publishes([

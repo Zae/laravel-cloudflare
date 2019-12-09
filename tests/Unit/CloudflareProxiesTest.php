@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Monicahq\Cloudflare\Tests\Unit;
 
@@ -8,10 +9,16 @@ use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
 use Monicahq\Cloudflare\CloudflareProxies;
 use Monicahq\Cloudflare\Tests\FeatureTestCase;
+use UnexpectedValueException;
 
+/**
+ * Class CloudflareProxiesTest
+ *
+ * @package Monicahq\Cloudflare\Tests\Unit
+ */
 class CloudflareProxiesTest extends FeatureTestCase
 {
-    public function test_load_empty()
+    public function test_load_empty(): void
     {
         $loader = new CloudflareProxies($this->app->make('config'));
 
@@ -21,7 +28,7 @@ class CloudflareProxiesTest extends FeatureTestCase
         $this->assertCount(0, $ips);
     }
 
-    public function test_load_ipv4()
+    public function test_load_ipv4(): void
     {
         $mock = new MockHandler([
             new Response(200, [], '0.0.0.0/20'),
@@ -39,7 +46,7 @@ class CloudflareProxiesTest extends FeatureTestCase
         ], $ips);
     }
 
-    public function test_load_ipv6()
+    public function test_load_ipv6(): void
     {
         $mock = new MockHandler([
             new Response(200, [], '::1/32'),
@@ -57,7 +64,7 @@ class CloudflareProxiesTest extends FeatureTestCase
         ], $ips);
     }
 
-    public function test_load_all()
+    public function test_load_all(): void
     {
         $mock = new MockHandler([
             new Response(200, [], '0.0.0.0/20'),
@@ -77,7 +84,7 @@ class CloudflareProxiesTest extends FeatureTestCase
         ], $ips);
     }
 
-    public function test_load_default()
+    public function test_load_default(): void
     {
         $me = $this;
         $mock = new MockHandler([
@@ -99,7 +106,37 @@ class CloudflareProxiesTest extends FeatureTestCase
         ], $ips);
     }
 
-    public function test_right_urls()
+    public function test_load_exception(): void
+    {
+        $this->expectException(UnexpectedValueException::class);
+
+        $mock = new MockHandler([
+            new Response(500, [], ''),
+        ]);
+        $handler = HandlerStack::create($mock);
+        $client = new Client(['handler' => $handler]);
+
+        $loader = new CloudflareProxies($this->app->make('config'), $client);
+
+        $loader->load();
+    }
+
+    public function test_load_not_200(): void
+    {
+        $this->expectException(UnexpectedValueException::class);
+
+        $mock = new MockHandler([
+            new Response(210, [], ''),
+        ]);
+        $handler = HandlerStack::create($mock);
+        $client = new Client(['handler' => $handler]);
+
+        $loader = new CloudflareProxies($this->app->make('config'), $client);
+
+        $loader->load();
+    }
+
+    public function test_right_urls(): void
     {
         $me = $this;
         $mock = new MockHandler([
@@ -122,7 +159,7 @@ class CloudflareProxiesTest extends FeatureTestCase
         $loader->load();
     }
 
-    public function test_create_guzzle()
+    public function test_create_guzzle(): void
     {
         $loader = new CloudflareProxies($this->app->make('config'));
 
@@ -134,5 +171,12 @@ class CloudflareProxiesTest extends FeatureTestCase
 
         $this->assertNotNull($client);
         $this->assertInstanceOf(Client::class, $client);
+    }
+
+    public function test_create_class(): void
+    {
+        $loader = $this->app->make(CloudflareProxies::class);
+
+        $this->assertInstanceOf(CloudflareProxies::class, $loader);
     }
 }

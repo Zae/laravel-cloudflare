@@ -1,10 +1,16 @@
 <?php
+declare(strict_types=1);
 
 namespace Monicahq\Cloudflare\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Cache;
 
+/**
+ * Class View
+ *
+ * @package Monicahq\Cloudflare\Commands
+ */
 class View extends Command
 {
     /**
@@ -25,8 +31,9 @@ class View extends Command
      * Execute the console command.
      *
      * @return void
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
-    public function handle()
+    public function handle(): void
     {
         $proxies = Cache::get($this->laravel->make('config')->get('laravelcloudflare.cache'), []);
 

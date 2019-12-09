@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Monicahq\Cloudflare\Http\Middleware;
 
@@ -6,6 +7,11 @@ use Fideloper\Proxy\TrustProxies as Middleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
+/**
+ * Class TrustProxies
+ *
+ * @package Monicahq\Cloudflare\Http\Middleware
+ */
 class TrustProxies extends Middleware
 {
     /**

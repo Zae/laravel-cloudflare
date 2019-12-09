@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Monicahq\Cloudflare\Commands;
 
@@ -27,8 +28,9 @@ class Reload extends Command
      * Execute the console command.
      *
      * @return void
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
-    public function handle()
+    public function handle(): void
     {
         /** @var CloudflareProxies */
         $loader = $this->laravel->make(CloudflareProxies::class);

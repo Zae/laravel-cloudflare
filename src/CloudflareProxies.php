@@ -1,11 +1,18 @@
 <?php
+declare(strict_types=1);
 
 namespace Monicahq\Cloudflare;
 
+use Exception;
 use GuzzleHttp\Client as GuzzleClient;
 use Illuminate\Contracts\Config\Repository;
 use UnexpectedValueException;
 
+/**
+ * Class CloudflareProxies
+ *
+ * @package Monicahq\Cloudflare
+ */
 class CloudflareProxies
 {
     public const IP_VERSION_4 = 1 << 0;
@@ -46,7 +53,7 @@ class CloudflareProxies
      * @param  int  $type
      * @return array
      */
-    public function load($type = self::IP_VERSION_ANY) : array
+    public function load(int $type = self::IP_VERSION_ANY): array
     {
         $proxies = [];
 
@@ -68,17 +75,17 @@ class CloudflareProxies
      * @param  string  $name requet name
      * @return array
      */
-    protected function retrieve($name) : array
+    protected function retrieve(string $name): array
     {
         try {
             $url = $this->config->get('laravelcloudflare.url').'/'.$name;
 
             $response = $this->client->request('GET', $url);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw new UnexpectedValueException('Failed to load trust proxies from Cloudflare server.', 1, $e);
         }
 
-        if ($response->getStatusCode() != 200) {
+        if ($response->getStatusCode() !== 200) {
             throw new UnexpectedValueException('Failed to load trust proxies from Cloudflare server.');
         }
 
